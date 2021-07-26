@@ -27,12 +27,15 @@ class EnodebDeviceName():
     BAICELLS_QAFA = 'Baicells QAFA'
     BAICELLS_QAFB = 'Baicells QAFB'
     BAICELLS_RTS = 'Baicells RTS'
+    BAICELLS_436Q = 'Baicells 436Q'
     CAVIUM = 'Cavium'
 
 
 def get_device_name(
     device_oui: str,
     sw_version: str,
+    hw_version: str,
+    product_class: str,
 ) -> str:
     """
     Use the manufacturer organization unique identifier read during INFORM
@@ -68,15 +71,25 @@ def get_device_name(
             return EnodebDeviceName.BAICELLS_RTS
         elif sw_version.startswith('BaiBS_RTSH_'):
             return EnodebDeviceName.BAICELLS_RTS
+        elif sw_version.startswith('BaiBS_QRTB_') \
+                and hw_version.startswith('E01') \
+                and product_class == 'FAP/mBS31001/SC':
+            # Note: We try to specifically enable 436Q model device only for 436Q,
+            # so we check additionally product class and hw version, as sw version of
+            # QRTB may be installed on other models
+            return EnodebDeviceName.BAICELLS_436Q
         else:
             raise UnrecognizedEnodebError(
-                "Device %s unsupported: Software (%s)"
-                % (device_oui, sw_version),
+                "Device %s unsupported: Software (%s), Hardware (%s), Product Class (%s)"
+                % (device_oui, sw_version, hw_version, product_class),
             )
     elif device_oui in {'000FB7', '744D28'}:
         return EnodebDeviceName.CAVIUM
     else:
-        raise UnrecognizedEnodebError("Device %s unsupported" % device_oui)
+        raise UnrecognizedEnodebError(
+            "Device %s unsupported: Software (%s), Hardware (%s), Product Class (%s)"
+            % (device_oui, sw_version, hw_version, product_class),
+        )
 
 
 def _parse_sw_version(version_str):

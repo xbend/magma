@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+from lte.protos.ha_service_pb2_grpc import HaServiceServicer
 from typing import Any, Dict, List, Optional
 
 from magma.enodebd.data_models.data_model import DataModel
@@ -76,12 +77,21 @@ def get_device_name_from_inform(
             path_list,
             param_values_by_path,
         )
+    if hasattr(inform, 'DeviceId') and hasattr(inform.DeviceId, 'ProductClass'):
+        product_class = inform.DeviceId.ProductClass
+    else:
+        product_class = ''
     sw_version = _get_param_value_from_path_suffix(
         'DeviceInfo.SoftwareVersion',
         path_list,
         param_values_by_path,
     )
-    return get_device_name(device_oui, sw_version)
+    hw_version = _get_param_value_from_path_suffix(
+        'DeviceInfo.HardwareVersion',
+        path_list,
+        param_values_by_path,
+    )
+    return get_device_name(device_oui, sw_version, hw_version, product_class)
 
 
 def does_inform_have_event(

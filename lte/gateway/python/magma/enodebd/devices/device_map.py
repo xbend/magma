@@ -18,6 +18,7 @@ from magma.enodebd.devices.baicells_old import BaicellsOldHandler
 from magma.enodebd.devices.baicells_qafa import BaicellsQAFAHandler
 from magma.enodebd.devices.baicells_qafb import BaicellsQAFBHandler
 from magma.enodebd.devices.baicells_rts import BaicellsRTSHandler
+from magma.enodebd.devices.baicells_436Q import Baicells436QHandler
 from magma.enodebd.devices.device_utils import EnodebDeviceName
 from magma.enodebd.devices.experimental.cavium import CaviumHandler
 from magma.enodebd.state_machines.enb_acs import EnodebAcsStateMachine
@@ -32,6 +33,7 @@ DEVICE_HANDLER_BY_NAME = {
     EnodebDeviceName.BAICELLS_QAFA: BaicellsQAFAHandler,
     EnodebDeviceName.BAICELLS_QAFB: BaicellsQAFBHandler,
     EnodebDeviceName.BAICELLS_RTS: BaicellsRTSHandler,
+    EnodebDeviceName.BAICELLS_436Q: Baicells436QHandler,
     EnodebDeviceName.CAVIUM: CaviumHandler,
 }
 

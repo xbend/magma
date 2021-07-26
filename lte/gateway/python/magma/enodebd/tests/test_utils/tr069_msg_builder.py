@@ -56,6 +56,81 @@ class Tr069MessageBuilder:
         return msg
 
     @classmethod
+    def get_436Q_inform(
+        cls,
+        oui: str = '48BF74',
+        sw_version: str = 'BaiBS_QRTB_2.6.2',
+        enb_serial: str = '120200024019APP0105',
+        event_codes: Optional[List[str]] = None,
+    ) -> models.Inform:
+        if event_codes is None:
+            event_codes = []
+        msg = models.Inform()
+
+        # DeviceId
+        device_id = models.DeviceIdStruct()
+        device_id.Manufacturer = 'Unused'
+        device_id.OUI = oui
+        device_id.ProductClass = 'FAP/mBS31001/SC'
+        device_id.SerialNumber = enb_serial
+        msg.DeviceId = device_id
+
+        # Event
+        msg.Event = models.EventList()
+        event_list = []
+        for code in event_codes:
+            event = models.EventStruct()
+            event.EventCode = code
+            event.CommandKey = ''
+            event_list.append(event)
+        msg.Event.EventStruct = event_list
+
+        # ParameterList
+        val_list = []
+        val_list.append(
+            cls.get_parameter_value_struct(
+                name='InternetGatewayDevice.DeviceInfo.HardwareVersion',
+                val_type='string',
+                data='E01',
+            ),
+        )
+        val_list.append(
+            cls.get_parameter_value_struct(
+                name='InternetGatewayDevice.DeviceInfo.ManufacturerOUI',
+                val_type='string',
+                data=oui,
+            ),
+        )
+        val_list.append(
+            cls.get_parameter_value_struct(
+                name='InternetGatewayDevice.DeviceInfo.SoftwareVersion',
+                val_type='string',
+                data=sw_version,
+            ),
+        )
+        val_list.append(
+            cls.get_parameter_value_struct(
+                name='InternetGatewayDevice.DeviceInfo.SerialNumber',
+                val_type='string',
+                data=enb_serial,
+            ),
+        )
+        val_list.append(
+            cls.get_parameter_value_struct(
+                name='InternetGatewayDevice.ManagementServer.ConnectionRequestURL',
+                val_type='string',
+                data='http://192.168.60.248:7547/25dbc91d31276f0cb03391160531ecae',
+            ),
+        )
+        msg.ParameterList = models.ParameterValueList()
+        msg.ParameterList.ParameterValueStruct = val_list
+
+        return msg
+
+        pass
+
+
+    @classmethod
     def get_qafb_inform(
         cls,
         oui: str = '48BF74',
